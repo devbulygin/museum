@@ -3,7 +3,6 @@ plugins {
 	id("org.springframework.boot") version "3.5.3"
 	id("io.spring.dependency-management") version "1.1.7"
 	id("checkstyle")
-	id("com.diffplug.spotless") version "7.1.0"
 }
 
 group = "com.museum"
@@ -44,20 +43,3 @@ checkstyle {
 	configFile = file("config/checkstyle/checkstyle.xml")
 	isIgnoreFailures = false
 }
-
-spotless {
-	java {
-		googleJavaFormat("1.17.0")
-		target("src/**/*.java")
-	}
-	kotlin {
-		ktfmt("0.44").googleStyle()
-		target("src/**/*.kt")
-	}
-}
-
-tasks.named("check") {
-	dependsOn("spotlessCheck")
-}
-
-
