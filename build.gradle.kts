@@ -3,6 +3,7 @@ plugins {
 	id("org.springframework.boot") version "3.5.3"
 	id("io.spring.dependency-management") version "1.1.7"
 	id("checkstyle")
+	id("org.sonarqube") version "6.2.0.5505"
 }
 
 group = "com.museum"
@@ -42,4 +43,12 @@ checkstyle {
 	toolVersion = "10.12.4"
 	configFile = file("config/checkstyle/checkstyle.xml")
 	isIgnoreFailures = false
+}
+
+sonar {
+	properties {
+		property("sonar.projectKey", "devbulygin_museum")
+		property("sonar.organization", "devbulygin")
+		property("sonar.host.url", "https://sonarcloud.io")
+	}
 }
