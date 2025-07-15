@@ -81,3 +81,6 @@ Thumbs.db
 # Others
 logs/
 *.orig
+
+# Checkstyle reports
+build/reports/checkstyle/
