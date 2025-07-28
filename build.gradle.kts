@@ -3,7 +3,7 @@ plugins {
 	id("org.springframework.boot") version "3.5.3"
 	id("io.spring.dependency-management") version "1.1.7"
 	id("checkstyle")
-	id("org.sonarqube") version "6.2.0.5505"
+	jacoco
 }
 
 group = "com.museum"
@@ -45,10 +45,20 @@ checkstyle {
 	isIgnoreFailures = false
 }
 
-sonar {
-	properties {
-		property("sonar.projectKey", "devbulygin_museum")
-		property("sonar.organization", "devbulygin")
-		property("sonar.host.url", "https://sonarcloud.io")
+tasks.test {
+	finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+	reports {
+		xml.required = false
+		csv.required = false
+		html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
 	}
 }
+
+jacoco {
+	toolVersion = "0.8.13"
+	reportsDirectory = layout.buildDirectory.dir("customJacocoReportDir")
+}
+
