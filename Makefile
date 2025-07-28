@@ -29,8 +29,9 @@ lint:
 test:
 	./gradlew test
 
-# report:
-# 	./gradlew jacocoTestReport
+test:
+	./gradlew test
+
 update-deps:
 	./gradlew refreshVersions
 

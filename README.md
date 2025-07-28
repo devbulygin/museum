@@ -1,2 +1,2 @@
 # museum
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=devbulygin_museum&metric=coverage)](https://sonarcloud.io/summary/new_code?id=devbulygin_museum)
+[![Maintainability](https://qlty.sh/gh/devbulygin/projects/museum/maintainability.svg)](https://qlty.sh/gh/devbulygin/projects/museum)
