@@ -20,8 +20,8 @@ start-prod:
 install:
 	./gradlew installDist
 
-# start-dist:
-# 	./build/install/app/bin/app
+report:
+	./gradlew jacocoTestReport
 
 lint:
 	./gradlew checkstyleMain checkstyleTest
