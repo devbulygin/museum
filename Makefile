@@ -29,9 +29,6 @@ lint:
 test:
 	./gradlew test
 
-test:
-	./gradlew test
-
 update-deps:
 	./gradlew refreshVersions
 
