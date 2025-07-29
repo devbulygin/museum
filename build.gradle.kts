@@ -59,6 +59,6 @@ tasks.jacocoTestReport {
 
 jacoco {
 	toolVersion = "0.8.13"
-	reportsDirectory = layout.buildDirectory.dir("customJacocoReportDir")
+	reportsDirectory = layout.buildDirectory.dir("jacoco")
 }
 
