@@ -3,6 +3,7 @@ plugins {
 	id("org.springframework.boot") version "3.5.3"
 	id("io.spring.dependency-management") version "1.1.7"
 	id("checkstyle")
+	id ("org.openapi.generator") version "7.14.0"
 	jacoco
 }
 
@@ -36,6 +37,7 @@ dependencies {
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	implementation("org.flywaydb:flyway-database-postgresql:10.12.0")
 	implementation("org.flywaydb:flyway-core")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
 }
 
 
@@ -66,3 +68,12 @@ jacoco {
 	reportsDirectory = layout.buildDirectory.dir("jacoco")
 }
 
+openApiGenerate {
+	generatorName.set("java")
+	inputSpec.set("$rootDir/src/main/resources/static/museum-v3.0.yaml")
+	outputDir.set("$buildDir/generated")
+	apiPackage.set("org.openapi.example.api")
+	invokerPackage.set("org.openapi.example.invoker")
+	modelPackage.set("org.openapi.example.model")
+	configOptions.put("dateLibrary", "java8")
+}
