@@ -20,12 +20,6 @@ java {
 	}
 }
 
-configurations {
-	compileOnly {
-		extendsFrom(configurations.annotationProcessor.get())
-	}
-}
-
 repositories {
 	mavenCentral()
 }
@@ -34,41 +28,48 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.postgresql:postgresql:42.7.7")
+	implementation("org.flywaydb:flyway-core")
+	implementation("org.flywaydb:flyway-database-postgresql:10.12.0")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+	implementation("org.openapitools:jackson-databind-nullable:0.2.6")
+
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
+
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-	implementation("org.flywaydb:flyway-database-postgresql:10.12.0")
-	implementation("org.flywaydb:flyway-core")
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+}
+
+configurations {
+	compileOnly {
+		extendsFrom(configurations.annotationProcessor.get())
+	}
 }
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+	finalizedBy(tasks.jacocoTestReport)
+}
+
+jacoco {
+	toolVersion = "0.8.13"
+	reportsDirectory = layout.buildDirectory.dir("jacoco")
+}
+
+tasks.jacocoTestReport {
+	reports {
+		xml.required.set(true)
+		csv.required.set(false)
+		html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
+	}
 }
 
 checkstyle {
 	toolVersion = "10.12.4"
 	configFile = file("config/checkstyle/checkstyle.xml")
 	isIgnoreFailures = false
-}
-
-tasks.test {
-	finalizedBy(tasks.jacocoTestReport)
-}
-
-tasks.jacocoTestReport {
-	reports {
-		xml.required = true
-		csv.required = false
-		html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
-	}
-}
-
-jacoco {
-	toolVersion = "0.8.13"
-	reportsDirectory = layout.buildDirectory.dir("jacoco")
 }
 
 val openApiSpecsDir = "${layout.projectDirectory}/src/main/resources/static"
@@ -110,7 +111,6 @@ openApiSpecs.forEach { (key, specPath) ->
 		configOptions.set(mapOf(
 			"dateLibrary" to "java8",
 			"interfaceOnly" to "true",
-			"delegatePattern" to "true",
 			"useTags" to "true",
 			"skipDefaultInterface" to "true",
 			"sourceFolder" to "src/main/java",
