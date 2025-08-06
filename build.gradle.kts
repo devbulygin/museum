@@ -1,4 +1,5 @@
 import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+import com.google.common.base.CaseFormat
 import java.io.File
 
 plugins {
@@ -73,10 +74,14 @@ jacoco {
 val openApiSpecsDir = "${layout.projectDirectory}/src/main/resources/static"
 val outputDir = "${layout.buildDirectory.get().asFile.absolutePath}/generated"
 
-fun sanitizeFileName(fileName: String): String {
-	return fileName.replace(".yaml", "").replace(".yml", "")
-		.replace(".", "_").replace("-", "_")
-		.lowercase().replace(Regex("[^a-z0-9_]"), "_")
+fun convertYamlCamelCaseToSnakeCase(str: String): String {
+	val strWithoutPostfix = str.replace(".yaml", "").replace(".yml", "").trim()
+	val cleanName = strWithoutPostfix.replace(".", "_").replace("-", "_")
+	return try {
+		CaseFormat.LOWER_CAMEL.to(CaseFormat.LOWER_UNDERSCORE, cleanName)
+	} catch (e: Exception) {
+		cleanName.lowercase().replace(Regex("[^a-z0-9_]"), "_")
+	}
 }
 
 val openApiSpecs = mutableMapOf<String, String>()
@@ -85,18 +90,21 @@ val specsDir = File(openApiSpecsDir)
 if (specsDir.exists()) {
 	specsDir.listFiles()?.forEach { file ->
 		if (file.name.endsWith(".yaml") || file.name.endsWith(".yml")) {
-			val sanitizedName = sanitizeFileName(file.name)
-			openApiSpecs[sanitizedName] = file.path
+			val convertedFileName = convertYamlCamelCaseToSnakeCase(file.name)
+			openApiSpecs[convertedFileName] = file.path
 		}
 	}
 }
 
 openApiSpecs.forEach { (key, specPath) ->
+	val taskOutputDir = "$outputDir/$key"
+
 	tasks.register<GenerateTask>("openApiGenerate-$key") {
 		generatorName.set("spring")
 		inputSpec.set(specPath)
-		outputDir.set("$outputDir/$key")
+		outputDir.set(taskOutputDir)
 		apiPackage.set("com.museum.generated.api.$key")
+		invokerPackage.set("com.museum.generated.invoker.$key")
 		modelPackage.set("com.museum.generated.model.$key")
 
 		configOptions.set(mapOf(
@@ -106,26 +114,34 @@ openApiSpecs.forEach { (key, specPath) ->
 			"useTags" to "true",
 			"skipDefaultInterface" to "true",
 			"sourceFolder" to "src/main/java",
-			"useSpringBoot3" to "true"
+			"useSpringBoot3" to "true",
+			"library" to "spring-boot"
 		))
 
 		globalProperties.set(mapOf(
 			"apis" to "",
-			"models" to ""
+			"models" to "",
+			"supportingFiles" to ""
 		))
 	}
 }
 
 tasks.register("generateAllOpenApi") {
-	group = "openapi tools"
-	description = "Генерирует все OpenAPI контроллеры"
+	group = "openapi"
+	description = "Генерирует все OpenAPI контроллеры из спецификаций"
 	dependsOn("cleanGeneratedOpenApi")
 	dependsOn(openApiSpecs.keys.map { "openApiGenerate-$it" })
+
+	doFirst {
+		openApiSpecs.forEach { (key, path) ->
+			println("  $key -> $path")
+		}
+	}
 }
 
 tasks.register<Delete>("cleanGeneratedOpenApi") {
-	group = "openapi tools"
-	description = "Очищает сгенерированные OpenAPI файлы"
+	group = "openapi"
+	description = "Очищает все сгенерированные OpenAPI файлы"
 	delete(outputDir)
 }
 
@@ -140,5 +156,9 @@ sourceSets {
 }
 
 tasks.compileJava {
+	dependsOn("generateAllOpenApi")
+}
+
+tasks.named("processResources") {
 	dependsOn("generateAllOpenApi")
 }
