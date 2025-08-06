@@ -1,9 +1,12 @@
+import org.openapitools.generator.gradle.plugin.tasks.GenerateTask
+import java.io.File
+
 plugins {
 	java
 	id("org.springframework.boot") version "3.5.3"
 	id("io.spring.dependency-management") version "1.1.7"
 	id("checkstyle")
-	id ("org.openapi.generator") version "7.14.0"
+	id("org.openapi.generator") version "7.14.0"
 	jacoco
 }
 
@@ -40,7 +43,6 @@ dependencies {
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
 }
 
-
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
@@ -68,12 +70,75 @@ jacoco {
 	reportsDirectory = layout.buildDirectory.dir("jacoco")
 }
 
-openApiGenerate {
-	generatorName.set("java")
-	inputSpec.set("$rootDir/src/main/resources/static/museum-v3.0.yaml")
-	outputDir.set("$buildDir/generated")
-	apiPackage.set("org.openapi.example.api")
-	invokerPackage.set("org.openapi.example.invoker")
-	modelPackage.set("org.openapi.example.model")
-	configOptions.put("dateLibrary", "java8")
+val openApiSpecsDir = "${layout.projectDirectory}/src/main/resources/static"
+val outputDir = "${layout.buildDirectory.get().asFile.absolutePath}/generated"
+
+fun sanitizeFileName(fileName: String): String {
+	return fileName.replace(".yaml", "").replace(".yml", "")
+		.replace(".", "_").replace("-", "_")
+		.lowercase().replace(Regex("[^a-z0-9_]"), "_")
+}
+
+val openApiSpecs = mutableMapOf<String, String>()
+val specsDir = File(openApiSpecsDir)
+
+if (specsDir.exists()) {
+	specsDir.listFiles()?.forEach { file ->
+		if (file.name.endsWith(".yaml") || file.name.endsWith(".yml")) {
+			val sanitizedName = sanitizeFileName(file.name)
+			openApiSpecs[sanitizedName] = file.path
+		}
+	}
+}
+
+openApiSpecs.forEach { (key, specPath) ->
+	tasks.register<GenerateTask>("openApiGenerate-$key") {
+		generatorName.set("spring")
+		inputSpec.set(specPath)
+		outputDir.set("$outputDir/$key")
+		apiPackage.set("com.museum.generated.api.$key")
+		modelPackage.set("com.museum.generated.model.$key")
+
+		configOptions.set(mapOf(
+			"dateLibrary" to "java8",
+			"interfaceOnly" to "true",
+			"delegatePattern" to "true",
+			"useTags" to "true",
+			"skipDefaultInterface" to "true",
+			"sourceFolder" to "src/main/java",
+			"useSpringBoot3" to "true"
+		))
+
+		globalProperties.set(mapOf(
+			"apis" to "",
+			"models" to ""
+		))
+	}
+}
+
+tasks.register("generateAllOpenApi") {
+	group = "openapi tools"
+	description = "Генерирует все OpenAPI контроллеры"
+	dependsOn("cleanGeneratedOpenApi")
+	dependsOn(openApiSpecs.keys.map { "openApiGenerate-$it" })
+}
+
+tasks.register<Delete>("cleanGeneratedOpenApi") {
+	group = "openapi tools"
+	description = "Очищает сгенерированные OpenAPI файлы"
+	delete(outputDir)
+}
+
+sourceSets {
+	main {
+		java {
+			openApiSpecs.keys.forEach { key ->
+				srcDir("$outputDir/$key/src/main/java")
+			}
+		}
+	}
+}
+
+tasks.compileJava {
+	dependsOn("generateAllOpenApi")
 }
