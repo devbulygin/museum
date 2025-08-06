@@ -5,6 +5,8 @@ info:
 paths:
   /:
     get:
+      tags:
+        - Hello
       summary: Возвращает приветствие
       operationId: getHello
       responses:

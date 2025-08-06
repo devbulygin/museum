@@ -127,7 +127,7 @@ openApiSpecs.forEach { (key, specPath) ->
 }
 
 tasks.register("generateAllOpenApi") {
-	group = "openapi"
+	group = "openapi tools"
 	description = "Генерирует все OpenAPI контроллеры из спецификаций"
 	dependsOn("cleanGeneratedOpenApi")
 	dependsOn(openApiSpecs.keys.map { "openApiGenerate-$it" })
@@ -140,7 +140,7 @@ tasks.register("generateAllOpenApi") {
 }
 
 tasks.register<Delete>("cleanGeneratedOpenApi") {
-	group = "openapi"
+	group = "openapi tools"
 	description = "Очищает все сгенерированные OpenAPI файлы"
 	delete(outputDir)
 }
