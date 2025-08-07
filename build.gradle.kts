@@ -145,11 +145,13 @@ tasks.register<Delete>("cleanGeneratedOpenApi") {
 	delete(outputDir)
 }
 
-sourceSets {
-	main {
-		java {
-			openApiSpecs.keys.forEach { key ->
-				srcDir("$outputDir/$key/src/main/java")
+afterEvaluate {
+	sourceSets {
+		main {
+			java {
+				openApiSpecs.keys.forEach { key ->
+					srcDir("$outputDir/$key/src/main/java")
+				}
 			}
 		}
 	}
