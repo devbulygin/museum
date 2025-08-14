@@ -1,0 +1,61 @@
+openapi: 3.0.3
+info:
+  title: Museum API
+  version: 1.0.0
+paths:
+  /status:
+    get:
+      tags:
+        - Version
+      summary: Get version info
+      description: Returns gate, system, and requisite information
+      operationId: getVersion
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VersionResponse'
+
+components:
+  schemas:
+    Gate:
+      type: object
+      properties:
+        Name: { type: string }
+        Version: { type: string }
+        Major: { type: integer }
+        Minor: { type: integer }
+        Release: { type: integer }
+        Build: { type: integer }
+        dtLicenceFinish: { type: string, format: date-time }
+    System:
+      type: object
+      properties:
+        Name: { type: string }
+        Version: { type: string }
+        Major: { type: integer }
+        Minor: { type: integer }
+        Release: { type: integer }
+        Build: { type: integer }
+        dtLicenceFinish: { type: string, format: date-time }
+    Requisite:
+      type: object
+      properties:
+        Name: { type: string }
+        City: { type: string }
+        Address: { type: string }
+        Phone1: { type: string }
+        Fax: { type: string }
+        dtBegin: { type: string, format: time }
+        dtEnd: { type: string, format: time }
+    VersionResponse:
+      type: object
+      properties:
+        Gate:
+          $ref: '#/components/schemas/Gate'
+        System:
+          $ref: '#/components/schemas/System'
+        Requisite:
+          $ref: '#/components/schemas/Requisite'
