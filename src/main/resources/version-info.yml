@@ -1,0 +1,25 @@
+version:
+  gateInfo:
+    name: TLMuseumGate
+    version: 7.0.6.1
+    major: 7
+    minor: 0
+    release: 6
+    build: 1
+    dtLicenceFinish: 2030-01-01
+  systemInfo:
+    name: TLMuseum
+    version: 6.10.9.19
+    major: 6
+    minor: 10
+    release: 9
+    build: 19
+    dtLicenceFinish: 2023-08-05
+  requisiteInfo:
+    name: "Государственное автономное учреждение культуры Московской области «Государственный мемориальный музыкальный музей-заповедник П.И.Чайковского»"
+    city: Москва
+    address: Нежинская 5
+    phone1: "+7(495)1234567"
+    fax: "+7(495)1234568"
+    dtBegin: "09:00:00"
+    dtEnd: "20:00:00"
