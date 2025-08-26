@@ -18,7 +18,7 @@ public class VersionHelper {
     public VersionResponse getVersion() {
         VersionResponse response = new VersionResponse();
         response.setGate(getGateResponce());
-        response.setSystem(getSystemResponce());
+        response.setSystem(getSystemResponse());
         response.setRequisite(getRequisiteResponse());
         return response;
     }
@@ -32,12 +32,12 @@ public class VersionHelper {
         gate.setMinor(gateInfo.getMinor());
         gate.setRelease(gateInfo.getRelease());
         gate.setBuild(gateInfo.getBuild());
-        gate.setDtLicenceFinish(gateInfo.getDtLicenceFinish() != null ?
-                gateInfo.getDtLicenceFinish().atStartOfDay().atOffset(ZoneOffset.UTC) : null);
+        gate.setDtLicenceFinish(gateInfo.getDtLicenceFinish() != null
+                ? gateInfo.getDtLicenceFinish().atStartOfDay().atOffset(ZoneOffset.UTC) : null);
         return gate;
     }
 
-    private com.museum.generated.model.version.System getSystemResponce() {
+    private com.museum.generated.model.version.System getSystemResponse() {
         VersionInfo.SystemInfo systemConfig = versionInfo.getSystemInfo();
 
         com.museum.generated.model.version.System systemResponse =  new com.museum.generated.model.version.System();
@@ -47,8 +47,8 @@ public class VersionHelper {
         systemResponse.setMinor(systemConfig.getMinor());
         systemResponse.setRelease(systemConfig.getRelease());
         systemResponse.setBuild(systemConfig.getBuild());
-        systemResponse.setDtLicenceFinish(systemConfig.getDtLicenceFinish() != null ?
-                systemConfig.getDtLicenceFinish().atStartOfDay().atOffset(ZoneOffset.UTC) : null);
+        systemResponse.setDtLicenceFinish(systemConfig.getDtLicenceFinish() != null
+                ? systemConfig.getDtLicenceFinish().atStartOfDay().atOffset(ZoneOffset.UTC) : null);
         return systemResponse;
     }
 
@@ -64,10 +64,10 @@ public class VersionHelper {
 
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-        requisiteResponse.setDtBegin(requisiteInfo.getDtBegin() != null ?
-                requisiteInfo.getDtBegin().format(timeFormatter) : null);
-        requisiteResponse.setDtEnd(requisiteInfo.getDtEnd() != null ?
-                requisiteInfo.getDtEnd().format(timeFormatter) : null);
+        requisiteResponse.setDtBegin(requisiteInfo.getDtBegin() != null
+                ? requisiteInfo.getDtBegin().format(timeFormatter) : null);
+        requisiteResponse.setDtEnd(requisiteInfo.getDtEnd() != null
+                ? requisiteInfo.getDtEnd().format(timeFormatter) : null);
         return requisiteResponse;
     }
 }

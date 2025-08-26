@@ -66,8 +66,8 @@ class VersionControllerTest {
   private Requisite createRequisite() {
     Requisite requisite = new Requisite();
     requisite.setName(
-        "Государственное автономное учреждение культуры " +
-                "Московской области «Государственный мемориальный музыкальный музей-заповедник П.И.Чайковского»");
+        "Государственное автономное учреждение культуры "
+                + "Московской области «Государственный мемориальный музыкальный музей-заповедник П.И.Чайковского»");
     requisite.setCity("Москва");
     requisite.setAddress("Нежинская 5");
     requisite.setPhone1("+7(495)1234567");
