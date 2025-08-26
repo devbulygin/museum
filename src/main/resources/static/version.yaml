@@ -7,8 +7,6 @@ paths:
     get:
       tags:
         - Version
-      summary: Get version info
-      description: Returns gate, system, and requisite information
       operationId: getVersion
       responses:
         '200':
