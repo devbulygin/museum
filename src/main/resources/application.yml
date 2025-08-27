@@ -23,10 +23,14 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
     show-sql: false
 
+  config:
+    import: classpath:version-info.yml
+
   flyway:
     baseline-on-migrate: true
     baseline-version: 0
     locations: classpath:db/migration
+
 
 server:
   port: 8080
@@ -34,3 +38,5 @@ server:
 logging:
   level:
     org.flywaydb: INFO
+
+

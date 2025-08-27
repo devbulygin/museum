@@ -4,11 +4,11 @@ import java.io.File
 
 plugins {
 	java
+    jacoco
 	id("org.springframework.boot") version "3.5.3"
 	id("io.spring.dependency-management") version "1.1.7"
 	id("checkstyle")
 	id("org.openapi.generator") version "7.14.0"
-	jacoco
 }
 
 group = "com.museum"
@@ -47,7 +47,7 @@ configurations {
 	}
 }
 
-tasks.withType<Test> {
+tasks.test {
 	useJUnitPlatform()
 	finalizedBy(tasks.jacocoTestReport)
 }
@@ -58,11 +58,17 @@ jacoco {
 }
 
 tasks.jacocoTestReport {
-	reports {
-		xml.required.set(true)
-		csv.required.set(false)
-		html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
-	}
+    reports {
+        xml.required = true
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
+    }
+
+    classDirectories.setFrom(files(classDirectories.files.map {
+        fileTree(it) {
+            exclude("com/museum/generated/**")
+        }
+    }))
 }
 
 checkstyle {
